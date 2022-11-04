@@ -6,6 +6,17 @@
 #include "GameFramework/Actor.h"
 #include "Weapon.generated.h"
 
+// Used for determining what we can do with the weapon in each state
+UENUM(BlueprintType)
+enum class EWeaponState : uint8
+{
+	EWS_Initial  UMETA(DisplayName = "Initial State"),
+	EWS_Equipped UMETA(DisplayName = "Equipped"),
+	EWS_Dropped  UMETA(DisplayName = "Dropped"),
+
+	EWS_MAX      UMETA(DisplayName = "DefaultMAX"),
+};
+
 UCLASS()
 class BLASTER_API AWeapon : public AActor
 {
@@ -29,5 +40,8 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Weapon Properties")
 	class USphereComponent* AreaSphere;
+
+	UPROPERTY(VisibleAnywhere)
+	EWeaponState WeaponState;
 	
 };
