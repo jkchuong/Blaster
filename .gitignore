@@ -87,6 +87,9 @@ DerivedDataCache/*
 # Built Visual Studio Code Extensions
 *.vsix
 
+# Rider Files
+Plugins/Developer/RiderLink
+
 # Built Projects
 Builds/
 

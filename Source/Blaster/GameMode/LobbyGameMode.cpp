@@ -10,9 +10,7 @@ void ALobbyGameMode::PostLogin(APlayerController* NewPlayer)
 	Super::PostLogin(NewPlayer);
 
 	// Use Get function for TObjectPtr
-	int32 NumberOfPlayers = GameState.Get()->PlayerArray.Num();
-
-	if (NumberOfPlayers == 2)
+	if (const int32 NumberOfPlayers = GameState.Get()->PlayerArray.Num(); NumberOfPlayers == 2)
 	{
 		UWorld* World = GetWorld();
 		if (World)
