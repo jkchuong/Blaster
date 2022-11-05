@@ -17,6 +17,12 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	/** 
+	 *  For registering variables that are marked with UPROPERTY(Replicated) to be replicated.
+	 *  Only updates when value is changed, not every frame.
+	 */
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 protected:
 
 	virtual void BeginPlay() override;
@@ -37,6 +43,18 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UWidgetComponent* OverheadWidget;
 
-public:	
-	
+	UPROPERTY(ReplicatedUsing = OnRep_OverlappingWeapon)
+	class AWeapon* OverlappingWeapon;
+
+	// A Rep Notify, called whenever Overlapping Weapon gets replicated
+	UFUNCTION()
+	void OnRep_OverlappingWeapon(AWeapon* LastWeapon);
+
+public:
+
+	/**
+	 *  For setting whether the character is overlapping a weapon.
+	 *  Will be called by the Weapon class but only on authority server.
+	 */
+	void SetOverlappingWeapon(AWeapon* Weapon);
 };
