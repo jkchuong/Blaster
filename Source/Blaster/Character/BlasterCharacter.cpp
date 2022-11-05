@@ -118,10 +118,14 @@ void ABlasterCharacter::SetOverlappingWeapon(AWeapon* Weapon)
 {
 	// First check if there's already a weapon and hide the widget
 	// To cover the case the server controlled character ends overlap of weapon
-	if (OverlappingWeapon)
+	if (IsLocallyControlled())
 	{
-		OverlappingWeapon->ShowPickupWidget(false);
+		if (OverlappingWeapon)
+		{
+			OverlappingWeapon->ShowPickupWidget(false);
+		}
 	}
+
 	
 	OverlappingWeapon = Weapon;
 
