@@ -6,6 +6,9 @@
 #include "GameFramework/Actor.h"
 #include "Weapon.generated.h"
 
+class USphereComponent;
+class UWidgetComponent;
+
 // Used for determining what we can do with the weapon in each state
 UENUM(BlueprintType)
 enum class EWeaponState : uint8
@@ -61,12 +64,17 @@ private:
 	USkeletalMeshComponent* WeaponMesh;
 
 	UPROPERTY(VisibleAnywhere, Category = "Weapon Properties")
-	class USphereComponent* AreaSphere;
+	USphereComponent* AreaSphere;
 
 	UPROPERTY(VisibleAnywhere, Category = "Weapon Properties")
 	EWeaponState WeaponState;
 
 	UPROPERTY(VisibleAnywhere, Category = "Weapon Properties")
-	class UWidgetComponent* PickupWidget;
+	UWidgetComponent* PickupWidget;
+
+public:
+
+	FORCEINLINE void SetWeaponState(EWeaponState State) { WeaponState = State; }
+
 	
 };

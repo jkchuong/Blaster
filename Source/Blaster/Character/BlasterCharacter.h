@@ -6,6 +6,9 @@
 #include "GameFramework/Character.h"
 #include "BlasterCharacter.generated.h"
 
+/**
+ *  Class for defining a playable character in the game.
+ */
 UCLASS()
 class BLASTER_API ABlasterCharacter : public ACharacter
 {
@@ -23,6 +26,9 @@ public:
 	 */
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
+	// Components will be constructed by the time this is called
+	virtual void PostInitializeComponents() override;
+	
 protected:
 
 	virtual void BeginPlay() override;
@@ -31,6 +37,7 @@ protected:
 	void MoveRight(float Value);
 	void TurnRight(float Value);
 	void LookUp(float Value);
+	void EquipButtonPressed();
 
 private:
 
@@ -50,6 +57,9 @@ private:
 	UFUNCTION()
 	void OnRep_OverlappingWeapon(AWeapon* LastWeapon);
 
+	UPROPERTY(VisibleAnywhere)
+	class UCombatComponent* CombatComponent;
+	
 public:
 
 	/**
