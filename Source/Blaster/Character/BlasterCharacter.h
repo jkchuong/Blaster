@@ -44,7 +44,8 @@ protected:
 	void TurnRight(float Value);
 	void LookUp(float Value);
 	void EquipButtonPressed();
-
+	void CrouchButtonPressed();
+	
 private:
 
 	UPROPERTY(VisibleAnywhere, Category = Camera)
@@ -60,7 +61,7 @@ private:
 	UPROPERTY(ReplicatedUsing = OnRep_OverlappingWeapon)
 	AWeapon* OverlappingWeapon;
 
-	// A Rep Notify, called whenever Overlapping Weapon gets replicated
+	// A Rep Notify for handling OverlappingWeapon from server
 	UFUNCTION()
 	void OnRep_OverlappingWeapon(AWeapon* LastWeapon);
 
