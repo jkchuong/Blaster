@@ -56,6 +56,7 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	UWidgetComponent* OverheadWidget;
 
+	// The weapon the character is currently overlapping. Only changes on the server and replicated with a rep notify.
 	UPROPERTY(ReplicatedUsing = OnRep_OverlappingWeapon)
 	AWeapon* OverlappingWeapon;
 
@@ -77,4 +78,6 @@ public:
 	 *  Will be called by the Weapon class but only on authority server.
 	 */
 	void SetOverlappingWeapon(AWeapon* Weapon);
+
+	bool IsWeaponEquipped();
 };

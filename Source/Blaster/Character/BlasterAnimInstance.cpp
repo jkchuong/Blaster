@@ -23,7 +23,7 @@ void UBlasterAnimInstance::NativeUpdateAnimation(float DeltaTime)
 		BlasterCharacter = Cast<ABlasterCharacter>(TryGetPawnOwner());
 	}
 
-	// Checking again since this function could be running before NativeInitializeAnimation has run, i.e in the editor
+	// Checking again since this function could be running before pawn owner has been set, i.e in the editor
 	if (!BlasterCharacter)
 	{
 		return;
@@ -37,5 +37,5 @@ void UBlasterAnimInstance::NativeUpdateAnimation(float DeltaTime)
 
 	bIsAccelerating = BlasterCharacter->GetCharacterMovement()->GetCurrentAcceleration().Size() > 0;
 
-
+	bWeaponEquipped = BlasterCharacter->IsWeaponEquipped();	
 }
