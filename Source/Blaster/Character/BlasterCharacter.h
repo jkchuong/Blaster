@@ -6,6 +6,12 @@
 #include "GameFramework/Character.h"
 #include "BlasterCharacter.generated.h"
 
+class USpringArmComponent;
+class AWeapon;
+class UCombatComponent;
+class UCameraComponent;
+class UWidgetComponent;
+
 /**
  *  Class for defining a playable character in the game.
  */
@@ -42,23 +48,27 @@ protected:
 private:
 
 	UPROPERTY(VisibleAnywhere, Category = Camera)
-	class USpringArmComponent* CameraBoom;
+	USpringArmComponent* CameraBoom;
 	
 	UPROPERTY(VisibleAnywhere, Category = Camera)
-	class UCameraComponent* FollowCamera;
+	UCameraComponent* FollowCamera;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	class UWidgetComponent* OverheadWidget;
+	UWidgetComponent* OverheadWidget;
 
 	UPROPERTY(ReplicatedUsing = OnRep_OverlappingWeapon)
-	class AWeapon* OverlappingWeapon;
+	AWeapon* OverlappingWeapon;
 
 	// A Rep Notify, called whenever Overlapping Weapon gets replicated
 	UFUNCTION()
 	void OnRep_OverlappingWeapon(AWeapon* LastWeapon);
 
 	UPROPERTY(VisibleAnywhere)
-	class UCombatComponent* CombatComponent;
+	UCombatComponent* CombatComponent;
+
+	// To be called on the client and executed on the server - Server Remote Procedure Call (RPC)
+	UFUNCTION(Server, Reliable)
+	void ServerEquipButtonPressed();
 	
 public:
 

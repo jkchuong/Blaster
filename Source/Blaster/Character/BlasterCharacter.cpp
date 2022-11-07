@@ -117,10 +117,18 @@ void ABlasterCharacter::LookUp(float Value)
 
 void ABlasterCharacter::EquipButtonPressed()
 {
-	// Only want authority pawn to interact so it can then be replicated to the client
-	if (CombatComponent && HasAuthority())
+	if (CombatComponent)
 	{
-		CombatComponent->EquipWeapon(OverlappingWeapon);
+		// Only want authority pawn to interact so it can then be replicated to the client
+		if (HasAuthority())
+		{
+			CombatComponent->EquipWeapon(OverlappingWeapon);
+		}
+		else
+		{
+			// If not authority, then send a Server RPC to equip the weapon 
+			ServerEquipButtonPressed();
+		}
 	}
 }
 
@@ -132,10 +140,19 @@ void ABlasterCharacter::OnRep_OverlappingWeapon(AWeapon* LastWeapon)
 	}
 
 	// Last Weapon is the value of OverlappingWeapon BEFORE replication occurs.
-	// This will hide the widget of the last weapon we end overlapping that weapon
+	// This will hide the widget of the last weapon we end overlapping
 	if (LastWeapon)
 	{
 		LastWeapon->ShowPickupWidget(false);
+	}
+}
+
+// _Implementation added since UE5 will autogenerate a function to call this function when necessary
+void ABlasterCharacter::ServerEquipButtonPressed_Implementation()
+{
+	if (CombatComponent)
+	{
+		CombatComponent->EquipWeapon(OverlappingWeapon);
 	}
 }
 
@@ -151,7 +168,7 @@ void ABlasterCharacter::SetOverlappingWeapon(AWeapon* Weapon)
 		}
 	}
 
-	
+	// This will call OnRep_OverlappingWeapon if a network controller overlaps
 	OverlappingWeapon = Weapon;
 
 	// For covering the case if the server controlled character is overlapping the weapon

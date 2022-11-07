@@ -31,6 +31,7 @@ public:
 	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	void ShowPickupWidget(bool bShowWidget);
 	
@@ -38,7 +39,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	// To be called when the sphere component is overlapped. Should only happen if it has authority role
+	// To be called when the sphere component is overlapped. Should only happen if it has authority role.
 	UFUNCTION()
 	virtual void OnSphereOverlap(
 		UPrimitiveComponent* OverlappedComponent,
@@ -49,7 +50,7 @@ protected:
 		const FHitResult& SweepResult
 	);
 
-	// To be called when the sphere component ends overlap. Should only happen if it has authority role
+	// To be called when the sphere component ends overlap. Should only happen if it has authority role.
 	UFUNCTION()
 	virtual void OnSphereEndOverlap(
 		UPrimitiveComponent* OverlappedComponent,
@@ -63,18 +64,24 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Weapon Properties")
 	USkeletalMeshComponent* WeaponMesh;
 
+	// The area for which a character can interact with the weapon when it is initialized.
 	UPROPERTY(VisibleAnywhere, Category = "Weapon Properties")
 	USphereComponent* AreaSphere;
 
 	UPROPERTY(VisibleAnywhere, Category = "Weapon Properties")
+	UWidgetComponent* PickupWidget;
+
+	// Current state of the weapon to determine how it behaves. Will be replicated.
+	UPROPERTY(ReplicatedUsing = OnRep_WeaponState, VisibleAnywhere, Category = "Weapon Properties")
 	EWeaponState WeaponState;
 
-	UPROPERTY(VisibleAnywhere, Category = "Weapon Properties")
-	UWidgetComponent* PickupWidget;
+	// A Rep Notify. Will let the client know what to do when WeaponState value is changed and replicated.
+	UFUNCTION()
+	void OnRep_WeaponState();
 
 public:
 
-	FORCEINLINE void SetWeaponState(EWeaponState State) { WeaponState = State; }
-
+	void SetWeaponState(EWeaponState State);
+	FORCEINLINE USphereComponent* GetAreaSphere() const { return AreaSphere; }
 	
 };
