@@ -32,12 +32,22 @@ protected:
 
 	virtual void BeginPlay() override;
 
+	/** Manage aiming down sights. To be called by Blaster Character. */
+	void SetAiming(bool bIsAiming);
+
+	/** Server RPC to set aiming from the client to the server. */
+	UFUNCTION(Server, Reliable)
+	void ServerSetAiming(bool bIsAiming);
+	
 private:
 
 	ABlasterCharacter* Character;
 
-	// The weapon that the character has currently equipped.
+	/** The weapon that the character has currently equipped. */
 	UPROPERTY(Replicated)
 	AWeapon* EquippedWeapon;
-		
+
+	/** If the character is aiming or not. */
+	UPROPERTY(Replicated)
+	bool bAiming;
 };

@@ -45,6 +45,8 @@ protected:
 	void LookUp(float Value);
 	void EquipButtonPressed();
 	void CrouchButtonPressed();
+	void AimButtonPressed();
+	void AimButtonReleased();
 	
 private:
 
@@ -71,6 +73,8 @@ private:
 	// To be called on the client and executed on the server - Server Remote Procedure Call (RPC)
 	UFUNCTION(Server, Reliable)
 	void ServerEquipButtonPressed();
+
+	
 	
 public:
 
@@ -80,5 +84,15 @@ public:
 	 */
 	void SetOverlappingWeapon(AWeapon* Weapon);
 
+	/**
+	 * Checks whether a weapon is equipped or not.
+	 * Called by the animation class to play weapon animations so anim class does not need to know about Combat Component.
+	 */
 	bool IsWeaponEquipped();
+
+	/**
+	 * Checks whether character is aiming down sights or not.
+	 * Called by the animation class to play weapon animations so anim class does not need to know about Combat Component.
+	 */
+	bool IsAiming();
 };

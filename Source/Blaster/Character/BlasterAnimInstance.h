@@ -47,4 +47,8 @@ private:
 	/** Whether the Blaster Character is crouching or not. Set with the Character class. */
 	UPROPERTY(BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
 	bool bIsCrouched;
+	
+	/** Whether the Blaster Character is aiming down sights or not. Set with the Combat Component. */
+	UPROPERTY(BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
+	bool bAiming;
 };

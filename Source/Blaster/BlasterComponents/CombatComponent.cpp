@@ -5,6 +5,7 @@
 
 #include "Blaster/Character/BlasterCharacter.h"
 #include "Blaster/Weapon/Weapon.h"
+#include "Components/SkeletalMeshComponent.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include "Net/UnrealNetwork.h"
 
@@ -20,6 +21,21 @@ void UCombatComponent::BeginPlay()
 
 }
 
+void UCombatComponent::SetAiming(bool bIsAiming)
+{
+	// Setting bAiming here makes it show up on the client immediately - Don't need to wait for RPC to reach server
+	bAiming = bIsAiming;
+
+	// bAiming is replicated from server to client, so when client aims, we need to notify the server with RPC
+	ServerSetAiming(bIsAiming);
+
+}
+
+void UCombatComponent::ServerSetAiming_Implementation(bool bIsAiming)
+{
+	bAiming = bIsAiming;
+}
+
 void UCombatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
@@ -32,6 +48,7 @@ void UCombatComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 
 	// Replicate Equipped Weapon so it's updated on client side and animations can be updated accordingly
 	DOREPLIFETIME(UCombatComponent, EquippedWeapon);
+	DOREPLIFETIME(UCombatComponent, bAiming);
 }
 
 void UCombatComponent::EquipWeapon(AWeapon* WeaponToEquip)
