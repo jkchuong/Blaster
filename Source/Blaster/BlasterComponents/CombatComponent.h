@@ -38,13 +38,18 @@ protected:
 	/** Server RPC to set aiming from the client to the server. */
 	UFUNCTION(Server, Reliable)
 	void ServerSetAiming(bool bIsAiming);
+
+	/** Rep Notify for Equipped Weapon. For changing camera and movement settings when picking up a weapon.*/
+	UFUNCTION()
+	void OnRep_EquippedWeapon();
 	
 private:
 
+	UPROPERTY()
 	ABlasterCharacter* Character;
 
 	/** The weapon that the character has currently equipped. */
-	UPROPERTY(Replicated)
+	UPROPERTY(ReplicatedUsing = OnRep_EquippedWeapon)
 	AWeapon* EquippedWeapon;
 
 	/** If the character is aiming or not. */

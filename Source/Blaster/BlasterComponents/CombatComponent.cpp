@@ -7,6 +7,7 @@
 #include "Blaster/Weapon/Weapon.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Engine/SkeletalMeshSocket.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Net/UnrealNetwork.h"
 
 UCombatComponent::UCombatComponent()
@@ -29,6 +30,16 @@ void UCombatComponent::SetAiming(bool bIsAiming)
 	// bAiming is replicated from server to client, so when client aims, we need to notify the server with RPC
 	ServerSetAiming(bIsAiming);
 
+}
+
+// Change settings when equipping a weapon to allow leaning and strafing
+void UCombatComponent::OnRep_EquippedWeapon()
+{
+	if (EquippedWeapon && Character)
+	{
+		Character->GetCharacterMovement()->bOrientRotationToMovement = false;
+		Character->bUseControllerRotationYaw = true;
+	}
 }
 
 void UCombatComponent::ServerSetAiming_Implementation(bool bIsAiming)
@@ -67,5 +78,9 @@ void UCombatComponent::EquipWeapon(AWeapon* WeaponToEquip)
 	}
 	
 	EquippedWeapon->SetOwner(Character);
+	
+	// Don't rotate character to movement so we can have strafing. Replicated with EquippedWeapon Rep Notify
+	Character->GetCharacterMovement()->bOrientRotationToMovement = false;
+	Character->bUseControllerRotationYaw = true;
 }
 

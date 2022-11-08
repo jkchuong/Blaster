@@ -51,4 +51,25 @@ private:
 	/** Whether the Blaster Character is aiming down sights or not. Set with the Combat Component. */
 	UPROPERTY(BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
 	bool bAiming;
+
+	/**
+	 *  The amount the Blaster Character is strafing left or right or moving backwards from -180 to 180.
+	 *  Negative value means strafing left, positive value means strafing right.
+	 */
+	UPROPERTY(BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
+	float YawOffset;
+
+	/**
+	 *  The amount the Blaster Character is leaning left or right.
+	 *  Negative value means leaning left, positive value means leaning right.
+	 */
+	UPROPERTY(BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
+	float Lean;
+
+	void SetYawOffset(float DeltaTime);
+	void SetLean(float DeltaTime);
+
+	FRotator CharacterRotationLastFrame;
+	FRotator CharacterRotation;
+	FRotator DeltaRotation;
 };
