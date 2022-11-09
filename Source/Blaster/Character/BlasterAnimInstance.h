@@ -60,7 +60,7 @@ private:
 	float YawOffset;
 
 	/**
-	 *  The amount the Blaster Character is leaning left or right.
+	 *  The amount the Blaster Character is leaning left or right when the player rotates their camera.
 	 *  Negative value means leaning left, positive value means leaning right.
 	 */
 	UPROPERTY(BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
@@ -69,6 +69,7 @@ private:
 	void SetYawOffset(float DeltaTime);
 	void SetLean(float DeltaTime);
 
+	// Helper variables for settings Lean and YawOffset
 	FRotator CharacterRotationLastFrame;
 	FRotator CharacterRotation;
 	FRotator DeltaRotation;
