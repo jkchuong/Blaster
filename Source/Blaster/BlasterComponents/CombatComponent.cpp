@@ -14,12 +14,19 @@ UCombatComponent::UCombatComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 
+	BaseWalkSpeed = 600.0f;
+	AimWalkSpeed = 450.0f;
+	
 }
 
 void UCombatComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
+	if (Character)
+	{
+		Character->GetCharacterMovement()->MaxWalkSpeed = BaseWalkSpeed;
+	}
 }
 
 void UCombatComponent::SetAiming(bool bIsAiming)
@@ -29,7 +36,16 @@ void UCombatComponent::SetAiming(bool bIsAiming)
 
 	// bAiming is replicated from server to client, so when client aims, we need to notify the server with RPC
 	ServerSetAiming(bIsAiming);
+}
 
+void UCombatComponent::ServerSetAiming_Implementation(bool bIsAiming)
+{
+	bAiming = bIsAiming;
+	if (Character)
+	{
+		// We don't want the player moving full speed while aiming
+		Character->GetCharacterMovement()->MaxWalkSpeed = bIsAiming ? AimWalkSpeed : BaseWalkSpeed;
+	}
 }
 
 // Change settings when equipping a weapon to allow leaning and strafing
@@ -40,11 +56,6 @@ void UCombatComponent::OnRep_EquippedWeapon()
 		Character->GetCharacterMovement()->bOrientRotationToMovement = false;
 		Character->bUseControllerRotationYaw = true;
 	}
-}
-
-void UCombatComponent::ServerSetAiming_Implementation(bool bIsAiming)
-{
-	bAiming = bIsAiming;
 }
 
 void UCombatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)

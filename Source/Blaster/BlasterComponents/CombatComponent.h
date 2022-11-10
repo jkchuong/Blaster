@@ -55,4 +55,12 @@ private:
 	/** If the character is aiming or not. */
 	UPROPERTY(Replicated)
 	bool bAiming;
+
+	/** Normal walk speed when not aiming down sights. */
+	UPROPERTY(EditAnywhere)
+	float BaseWalkSpeed;
+
+	/** Walk speed when aiming down sights. */
+	UPROPERTY(EditAnywhere)
+	float AimWalkSpeed;
 };
