@@ -73,4 +73,12 @@ private:
 	FRotator CharacterRotationLastFrame;
 	FRotator CharacterRotation;
 	FRotator DeltaRotation;
+
+	/** Yaw Aim Offset when a weapon is equipped. Will be used to drive how high or low the Blaster Character will look. */
+	UPROPERTY(BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
+	float AimOffsetYaw;
+
+	/** Pitch Aim Offset when a weapon is equipped. Will be used to drive how left or right the Blaster Character will look. */
+	UPROPERTY(BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
+	float AimOffsetPitch;
 };

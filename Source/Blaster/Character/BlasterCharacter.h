@@ -39,6 +39,7 @@ protected:
 
 	virtual void BeginPlay() override;
 
+	// Player input functions
 	void MoveForward(float Value);
 	void MoveRight(float Value);
 	void TurnRight(float Value);
@@ -47,6 +48,9 @@ protected:
 	void CrouchButtonPressed();
 	void AimButtonPressed();
 	void AimButtonReleased();
+
+	// For setting aim offset variables for the animation instance to call and blend aim poses.
+	void AimOffset(float DeltaTime);
 	
 private:
 
@@ -74,7 +78,12 @@ private:
 	UFUNCTION(Server, Reliable)
 	void ServerEquipButtonPressed();
 
-	
+	// Offsets when aiming with a weapon.
+	float AimOffsetYaw;
+	float AimOffsetPitch;
+
+	// Helper variables for setting AimOffset
+	FRotator StartingAimRotation;
 	
 public:
 
@@ -95,4 +104,7 @@ public:
 	 * Called by the animation class to play weapon animations so anim class does not need to know about Combat Component.
 	 */
 	bool IsAiming();
+
+	FORCEINLINE float GetAimOffsetYaw() const { return AimOffsetYaw; }
+	FORCEINLINE float GetAimOffsetPitch() const { return AimOffsetPitch; }
 };

@@ -11,6 +11,7 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/WidgetComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Net/UnrealNetwork.h"
 
 
@@ -78,6 +79,9 @@ void ABlasterCharacter::BeginPlay()
 void ABlasterCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	// Update where the character is looking at every frame.
+	AimOffset(DeltaTime);
 }
 
 void ABlasterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -168,6 +172,53 @@ void ABlasterCharacter::AimButtonReleased()
 	if (CombatComponent)
 	{
 		CombatComponent->SetAiming(false);
+	}
+}
+
+void ABlasterCharacter::AimOffset(float DeltaTime)
+{
+	if (!CombatComponent || !CombatComponent->EquippedWeapon)
+	{
+		// There's no aiming if there's no Combat Component available or no weapon available
+		return;
+	}
+	
+	FVector Velocity = GetVelocity();
+	Velocity.Z = 0.0f;
+	const float Speed = Velocity.Size();
+	const bool bIsInAir = GetCharacterMovement()->IsFalling();
+
+	if (Speed == 0.0f && !bIsInAir)
+	{
+		const FRotator CurrentAimRotation = FRotator(0.0f, GetBaseAimRotation().Yaw,0.0f);
+		const FRotator DeltaAimRotation = UKismetMathLibrary::NormalizedDeltaRotator(CurrentAimRotation, StartingAimRotation);
+		AimOffsetYaw = DeltaAimRotation.Yaw;
+
+		// Don't want to use controller rotation when not moving or the character will turn
+		bUseControllerRotationYaw = false;
+	}
+
+	// Don't need to change yaw when moving or jumping as we won't be pitching left or right
+	if (Speed > 0.0f || bIsInAir)
+	{
+		// Store where we last looked at when moving. Can use this to compare where we look when stopped moving.
+		StartingAimRotation = FRotator(0.0f, GetBaseAimRotation().Yaw, 0.0f);
+		AimOffsetYaw = 0.0f;
+
+		// Set the controller rotation so the character can turn while moving
+		bUseControllerRotationYaw = true;
+	}
+
+	AimOffsetPitch = GetBaseAimRotation().Pitch;
+
+	// Pitch value is changed to [0, 360) when sent from client to server
+	// We need to map it correctly for pitch animations to play correctly on the server.
+	if (AimOffsetPitch > 90.0f && !IsLocallyControlled())
+	{
+		// map pitch from [270, 360) to [-90, 0)
+		static const FVector2D InRange(270.0f, 360.0f);
+		static const FVector2D OutRange(-90.0f, 0.0f);
+		AimOffsetPitch = FMath::GetMappedRangeValueClamped(InRange, OutRange, AimOffsetPitch);
 	}
 }
 

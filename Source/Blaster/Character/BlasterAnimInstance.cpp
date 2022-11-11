@@ -68,6 +68,8 @@ void UBlasterAnimInstance::NativeUpdateAnimation(float DeltaTime)
 	bWeaponEquipped = BlasterCharacter->IsWeaponEquipped();
 	bIsCrouched = BlasterCharacter->bIsCrouched;
 	bAiming = BlasterCharacter->IsAiming();
+	AimOffsetYaw = BlasterCharacter->GetAimOffsetYaw();
+	AimOffsetPitch = BlasterCharacter->GetAimOffsetPitch();
 
 	SetYawOffset(DeltaTime);
 	SetLean(DeltaTime);
