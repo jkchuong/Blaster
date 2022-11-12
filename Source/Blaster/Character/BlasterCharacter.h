@@ -93,18 +93,16 @@ public:
 	 */
 	void SetOverlappingWeapon(AWeapon* Weapon);
 
-	/**
-	 * Checks whether a weapon is equipped or not.
-	 * Called by the animation class to play weapon animations so anim class does not need to know about Combat Component.
-	 */
+	/** Checks whether a weapon is equipped or not. */
 	bool IsWeaponEquipped();
 
-	/**
-	 * Checks whether character is aiming down sights or not.
-	 * Called by the animation class to play weapon animations so anim class does not need to know about Combat Component.
-	 */
+	/** Checks whether character is aiming down sights or not. */
 	bool IsAiming();
 
+	/** Get the aim offset created when facing a direction with a weapon. */
 	FORCEINLINE float GetAimOffsetYaw() const { return AimOffsetYaw; }
 	FORCEINLINE float GetAimOffsetPitch() const { return AimOffsetPitch; }
+
+	AWeapon* GetEquippedWeapon();
+	
 };

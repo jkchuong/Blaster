@@ -6,10 +6,11 @@
 #include "Animation/AnimInstance.h"
 #include "BlasterAnimInstance.generated.h"
 
+class AWeapon;
 class ABlasterCharacter;
 
 /**
- *  Class to handle the animations for the Blaster Character
+ *  Class to handle animations for Blaster Character
  */
 UCLASS()
 class BLASTER_API UBlasterAnimInstance : public UAnimInstance
@@ -43,6 +44,10 @@ private:
 	/** Whether the Blaster Character is equipping a weapon or not. Set with the Combat Component. */
 	UPROPERTY(BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
 	bool bWeaponEquipped;
+
+	/** The weapon that is currently equipped. nullptr if no weapon is equipped. */
+	UPROPERTY(BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
+	AWeapon* EquippedWeapon;
 
 	/** Whether the Blaster Character is crouching or not. Set with the Character class. */
 	UPROPERTY(BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
@@ -81,4 +86,9 @@ private:
 	/** Pitch Aim Offset when a weapon is equipped. Will be used to drive how left or right the Blaster Character will look. */
 	UPROPERTY(BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
 	float AimOffsetPitch;
+	
+	/** Position of the left hand when equipping a weapon. */
+	UPROPERTY(BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
+	FTransform LeftHandTransform;
+	
 };

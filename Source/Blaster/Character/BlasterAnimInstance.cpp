@@ -4,6 +4,7 @@
 #include "BlasterAnimInstance.h"
 
 #include "BlasterCharacter.h"
+#include "Blaster/Weapon/Weapon.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 
@@ -59,13 +60,15 @@ void UBlasterAnimInstance::NativeUpdateAnimation(float DeltaTime)
 		return;
 	}
 
+	// Set values for animation blueprint
 	FVector Velocity = BlasterCharacter->GetVelocity();
 	Velocity.Z = 0.0f;
 	Speed = Velocity.Size();
-
+	
 	bIsInAir = BlasterCharacter->GetCharacterMovement()->IsFalling();
 	bIsAccelerating = BlasterCharacter->GetCharacterMovement()->GetCurrentAcceleration().Size() > 0;
 	bWeaponEquipped = BlasterCharacter->IsWeaponEquipped();
+	EquippedWeapon = BlasterCharacter->GetEquippedWeapon();
 	bIsCrouched = BlasterCharacter->bIsCrouched;
 	bAiming = BlasterCharacter->IsAiming();
 	AimOffsetYaw = BlasterCharacter->GetAimOffsetYaw();
@@ -73,5 +76,22 @@ void UBlasterAnimInstance::NativeUpdateAnimation(float DeltaTime)
 
 	SetYawOffset(DeltaTime);
 	SetLean(DeltaTime);
+
+	// Update the left hand position only if weapon mesh and character mesh are valid	
+	if (bWeaponEquipped && EquippedWeapon && EquippedWeapon->GetWeaponMesh() && BlasterCharacter->GetMesh())
+	{
+		LeftHandTransform = EquippedWeapon->GetWeaponMesh()->GetSocketTransform(FName("LeftHandSocket"), RTS_World);
+
+		// Apply left hand transform relative to hand_r position so the positions stays relative however animation moves
+		FVector OutPosition;
+		FRotator OutRotation;
+		BlasterCharacter->GetMesh()->TransformToBoneSpace(FName("hand_r"), LeftHandTransform.GetLocation(),
+		                                                  FRotator::ZeroRotator, OutPosition, OutRotation);
+
+		LeftHandTransform.SetLocation(OutPosition);
+		LeftHandTransform.SetRotation(FQuat(OutRotation));
+
+		
+	}
 
 }
