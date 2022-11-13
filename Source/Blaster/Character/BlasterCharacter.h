@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Blaster/BlasterTypes/TurningInPlace.h"
 #include "GameFramework/Character.h"
 #include "BlasterCharacter.generated.h"
 
@@ -84,6 +85,12 @@ private:
 
 	// Helper variables for setting AimOffset
 	FRotator StartingAimRotation;
+
+	/** State of the player when stationary. */
+	ETurningInPlace TurningInPlace;
+
+	/** Set the value of TurningInPlace according to yaw aim offset.*/
+	void TurnInPlace(float DeltaTime);
 	
 public:
 
@@ -104,5 +111,6 @@ public:
 	FORCEINLINE float GetAimOffsetPitch() const { return AimOffsetPitch; }
 
 	AWeapon* GetEquippedWeapon();
+	FORCEINLINE ETurningInPlace GetTurningInPlace() const { return TurningInPlace; }
 	
 };

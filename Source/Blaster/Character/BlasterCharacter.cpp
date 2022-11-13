@@ -48,6 +48,8 @@ ABlasterCharacter::ABlasterCharacter()
 	// Don't want character to block the camera of other players or it'll cause the camera to stutter back and forth
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
 	GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
+
+	TurningInPlace = ETurningInPlace::ETIP_NotTurning;
 }
 
 void ABlasterCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -196,6 +198,9 @@ void ABlasterCharacter::AimOffset(float DeltaTime)
 
 		// Don't want to use controller rotation when not moving or the character will turn
 		bUseControllerRotationYaw = false;
+
+		// Update TurningInPlace here since this is where the character is stationary
+		TurnInPlace(DeltaTime);
 	}
 
 	// Don't need to change yaw when moving or jumping as we won't be pitching left or right
@@ -207,6 +212,9 @@ void ABlasterCharacter::AimOffset(float DeltaTime)
 
 		// Set the controller rotation so the character can turn while moving
 		bUseControllerRotationYaw = true;
+
+		// No turning in place if we're moving
+		TurningInPlace = ETurningInPlace::ETIP_NotTurning;
 	}
 
 	AimOffsetPitch = GetBaseAimRotation().Pitch;
@@ -243,6 +251,18 @@ void ABlasterCharacter::ServerEquipButtonPressed_Implementation()
 	if (CombatComponent)
 	{
 		CombatComponent->EquipWeapon(OverlappingWeapon);
+	}
+}
+
+void ABlasterCharacter::TurnInPlace(float DeltaTime)
+{
+	if (AimOffsetYaw > 90.0f)
+	{
+		TurningInPlace = ETurningInPlace::ETIP_Right;
+	}
+	else if (AimOffsetYaw < -90.0f)
+	{
+		TurningInPlace = ETurningInPlace::ETIP_Left;
 	}
 }
 
