@@ -52,6 +52,9 @@ protected:
 
 	// For setting aim offset variables for the animation instance to call and blend aim poses.
 	void AimOffset(float DeltaTime);
+
+	// Override base jump so we can jump while crouching
+	virtual void Jump() override;
 	
 private:
 
@@ -82,6 +85,12 @@ private:
 	// Offsets when aiming with a weapon.
 	float AimOffsetYaw;
 	float AimOffsetPitch;
+
+	/**
+	 * For checking if character should interp to aim offset yaw.
+	 * I.e turning more than 90 degrees and need to rotate body.
+	 */
+	float InterpAimOffsetYaw;
 
 	// Helper variables for setting AimOffset
 	FRotator StartingAimRotation;

@@ -44,12 +44,15 @@ ABlasterCharacter::ABlasterCharacter()
 
 	// For allowing crouching
 	GetCharacterMovement()->NavAgentProps.bCanCrouch = true;
+	GetCharacterMovement()->RotationRate = FRotator(0.0f, 0.0f, 850.0f);
 
 	// Don't want character to block the camera of other players or it'll cause the camera to stutter back and forth
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
 	GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
 
 	TurningInPlace = ETurningInPlace::ETIP_NotTurning;
+	NetUpdateFrequency = 66.0f;
+	MinNetUpdateFrequency = 33.0f;
 }
 
 void ABlasterCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -90,7 +93,7 @@ void ABlasterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ThisClass::Jump);
 	PlayerInputComponent->BindAction("Equip", IE_Pressed, this, &ThisClass::EquipButtonPressed);
 	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &ThisClass::CrouchButtonPressed);
 	PlayerInputComponent->BindAction("Aim", IE_Pressed, this, &ThisClass::AimButtonPressed);
@@ -184,6 +187,9 @@ void ABlasterCharacter::AimOffset(float DeltaTime)
 		// There's no aiming if there's no Combat Component available or no weapon available
 		return;
 	}
+
+	// Set the controller rotation so the character can turn while moving
+	bUseControllerRotationYaw = true;
 	
 	FVector Velocity = GetVelocity();
 	Velocity.Z = 0.0f;
@@ -196,8 +202,10 @@ void ABlasterCharacter::AimOffset(float DeltaTime)
 		const FRotator DeltaAimRotation = UKismetMathLibrary::NormalizedDeltaRotator(CurrentAimRotation, StartingAimRotation);
 		AimOffsetYaw = DeltaAimRotation.Yaw;
 
-		// Don't want to use controller rotation when not moving or the character will turn
-		bUseControllerRotationYaw = false;
+		if (TurningInPlace == ETurningInPlace::ETIP_NotTurning)
+		{
+			InterpAimOffsetYaw = AimOffsetYaw;
+		}
 
 		// Update TurningInPlace here since this is where the character is stationary
 		TurnInPlace(DeltaTime);
@@ -209,10 +217,7 @@ void ABlasterCharacter::AimOffset(float DeltaTime)
 		// Store where we last looked at when moving. Can use this to compare where we look when stopped moving.
 		StartingAimRotation = FRotator(0.0f, GetBaseAimRotation().Yaw, 0.0f);
 		AimOffsetYaw = 0.0f;
-
-		// Set the controller rotation so the character can turn while moving
-		bUseControllerRotationYaw = true;
-
+		
 		// No turning in place if we're moving
 		TurningInPlace = ETurningInPlace::ETIP_NotTurning;
 	}
@@ -228,6 +233,16 @@ void ABlasterCharacter::AimOffset(float DeltaTime)
 		static const FVector2D OutRange(-90.0f, 0.0f);
 		AimOffsetPitch = FMath::GetMappedRangeValueClamped(InRange, OutRange, AimOffsetPitch);
 	}
+}
+
+void ABlasterCharacter::Jump()
+{
+	if (bIsCrouched)
+	{
+		UnCrouch();
+	}
+	
+	Super::Jump();
 }
 
 void ABlasterCharacter::OnRep_OverlappingWeapon(AWeapon* LastWeapon)
@@ -263,6 +278,20 @@ void ABlasterCharacter::TurnInPlace(float DeltaTime)
 	else if (AimOffsetYaw < -90.0f)
 	{
 		TurningInPlace = ETurningInPlace::ETIP_Left;
+	}
+
+	if (TurningInPlace != ETurningInPlace::ETIP_NotTurning)
+	{
+		// Interpolate Aim Offset Yaw if we are turning either side
+		InterpAimOffsetYaw = FMath::FInterpTo(InterpAimOffsetYaw, 0.0f, DeltaTime, 10.0f);
+		AimOffsetYaw = InterpAimOffsetYaw;
+
+		if (FMath::Abs(AimOffsetYaw) < 15.0f)
+		{
+			// Stop turning if we've turned enough
+			TurningInPlace = ETurningInPlace::ETIP_NotTurning;
+			StartingAimRotation = FRotator(0.0f, GetBaseAimRotation().Yaw, 0.0f);
+		}
 	}
 }
 
