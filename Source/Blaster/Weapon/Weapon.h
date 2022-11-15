@@ -8,6 +8,7 @@
 
 class USphereComponent;
 class UWidgetComponent;
+class UAnimationAsset;
 
 // Used for determining what we can do with the weapon in each state
 UENUM(BlueprintType)
@@ -37,8 +38,6 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
-	void ShowPickupWidget(bool bShowWidget);
-	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -68,24 +67,35 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Weapon Properties")
 	USkeletalMeshComponent* WeaponMesh;
 
-	// The area for which a character can interact with the weapon when it is initialized.
+	/** The area for which a character can interact with the weapon when it is initialized. */
 	UPROPERTY(VisibleAnywhere, Category = "Weapon Properties")
 	USphereComponent* AreaSphere;
 
 	UPROPERTY(VisibleAnywhere, Category = "Weapon Properties")
 	UWidgetComponent* PickupWidget;
 
-	// Current state of the weapon to determine how it behaves. Will be replicated.
+	/** Current state of the weapon to determine how it behaves. Will be replicated. */
 	UPROPERTY(ReplicatedUsing = OnRep_WeaponState, VisibleAnywhere, Category = "Weapon Properties")
 	EWeaponState WeaponState;
 
-	// A Rep Notify. Will let the client know what to do when WeaponState value is changed and replicated.
+	/** A Rep Notify. Will let the client know what to do when WeaponState value is changed and replicated. */
 	UFUNCTION()
 	void OnRep_WeaponState();
+
+	/** The animation of the weapon being fired. */
+	UPROPERTY(EditAnywhere, Category = "Weapon Properties")
+	UAnimationAsset* FireAnimation;
 
 public:
 
 	void SetWeaponState(EWeaponState State);
 	FORCEINLINE USphereComponent* GetAreaSphere() const { return AreaSphere; }
 	FORCEINLINE USkeletalMeshComponent* GetWeaponMesh() const { return WeaponMesh; }
+
+	/** Widget that is shown when overlapping with a character. */
+	void ShowPickupWidget(bool bShowWidget);
+
+	/** Fire the weapon. */
+	void Fire();
+
 };
