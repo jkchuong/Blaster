@@ -20,6 +20,10 @@ enum class EWeaponState : uint8
 	EWS_MAX      UMETA(DisplayName = "DefaultMAX"),
 };
 
+/**
+ *  Base weapon class for all weapons.
+ *  Contains common functionality across all weapons such as pick up collision and pick up widgets.
+ */
 UCLASS()
 class BLASTER_API AWeapon : public AActor
 {

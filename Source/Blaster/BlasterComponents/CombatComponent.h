@@ -42,6 +42,11 @@ protected:
 	/** Rep Notify for Equipped Weapon. For changing camera and movement settings when picking up a weapon.*/
 	UFUNCTION()
 	void OnRep_EquippedWeapon();
+
+	/** Fire the equipped weapon. */
+	void FireButtonPressed(bool bPressed);
+
+	bool bFireButtonPressed;
 	
 private:
 

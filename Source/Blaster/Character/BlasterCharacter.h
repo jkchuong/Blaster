@@ -12,6 +12,7 @@ class AWeapon;
 class UCombatComponent;
 class UCameraComponent;
 class UWidgetComponent;
+class UAnimMontage;
 
 /**
  *  Class for defining a playable character in the game.
@@ -35,6 +36,9 @@ public:
 
 	// Components will be constructed by the time this is called
 	virtual void PostInitializeComponents() override;
+
+	/** Play the hip or ironsights firing montage. */
+	void PlayFireMontage(bool bAiming);
 	
 protected:
 
@@ -49,6 +53,8 @@ protected:
 	void CrouchButtonPressed();
 	void AimButtonPressed();
 	void AimButtonReleased();
+	void FireButtonPressed();
+	void FireButtonReleased();
 
 	// For setting aim offset variables for the animation instance to call and blend aim poses.
 	void AimOffset(float DeltaTime);
@@ -100,6 +106,10 @@ private:
 
 	/** Set the value of TurningInPlace according to yaw aim offset.*/
 	void TurnInPlace(float DeltaTime);
+	
+	/** Animation Montage for for switching between hip and iron sight firing animations.*/
+	UPROPERTY(EditAnywhere, Category = Combat)
+	UAnimMontage* FireWeaponMontage;
 	
 public:
 

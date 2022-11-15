@@ -74,6 +74,23 @@ void ABlasterCharacter::PostInitializeComponents()
 	}
 }
 
+void ABlasterCharacter::PlayFireMontage(bool bAiming)
+{
+	if (!CombatComponent || !CombatComponent->EquippedWeapon)
+	{
+		return;
+	}
+
+	if (bAiming)
+	{
+		PlayAnimMontage(FireWeaponMontage, 1, FName("RifleAim"));
+	}
+	else
+	{
+		PlayAnimMontage(FireWeaponMontage, 1, FName("RifleHip"));
+	}
+}
+
 
 void ABlasterCharacter::BeginPlay()
 {
@@ -98,6 +115,8 @@ void ABlasterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &ThisClass::CrouchButtonPressed);
 	PlayerInputComponent->BindAction("Aim", IE_Pressed, this, &ThisClass::AimButtonPressed);
 	PlayerInputComponent->BindAction("Aim", IE_Released, this, &ThisClass::AimButtonReleased);
+	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &ThisClass::FireButtonPressed);
+	PlayerInputComponent->BindAction("Fire", IE_Released, this, &ThisClass::FireButtonReleased);
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &ThisClass::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &ThisClass::MoveRight);
@@ -177,6 +196,22 @@ void ABlasterCharacter::AimButtonReleased()
 	if (CombatComponent)
 	{
 		CombatComponent->SetAiming(false);
+	}
+}
+
+void ABlasterCharacter::FireButtonPressed()
+{
+	if (CombatComponent)
+	{
+		CombatComponent->FireButtonPressed(true);
+	}
+}
+
+void ABlasterCharacter::FireButtonReleased()
+{
+	if (CombatComponent)
+	{
+		CombatComponent->FireButtonPressed(false);
 	}
 }
 
