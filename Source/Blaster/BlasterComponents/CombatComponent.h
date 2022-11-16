@@ -6,6 +6,8 @@
 #include "Components/ActorComponent.h"
 #include "CombatComponent.generated.h"
 
+#define TRACE_LENGTH 80000
+
 class AWeapon;
 
 /**
@@ -47,6 +49,17 @@ protected:
 	void FireButtonPressed(bool bPressed);
 
 	bool bFireButtonPressed;
+
+	/** Server RPC for firing the weapon. */
+	UFUNCTION(Server, Reliable)
+	void ServerFire();
+
+	/** Multicast RPC for showing weapon firing on clients from the server. Called by ServerFire. */
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastFire();
+
+	/** Create a line trace to show where a projectile will fire. */
+	void TraceUnderCrosshairs(FHitResult& TraceHitResult);
 	
 private:
 
