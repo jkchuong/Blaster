@@ -81,4 +81,7 @@ private:
 	/** Walk speed when aiming down sights. */
 	UPROPERTY(EditAnywhere)
 	float AimWalkSpeed;
+
+	/** The target that the player is pointing towards. */
+	FVector HitTarget;
 };

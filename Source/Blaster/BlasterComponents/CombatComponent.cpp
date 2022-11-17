@@ -91,6 +91,7 @@ void UCombatComponent::FireButtonPressed(bool bPressed)
 void UCombatComponent::TraceUnderCrosshairs(FHitResult& TraceHitResult)
 {
 	//TODO: Draw line trace from middle of screen for now, until proper crosshairs implemented
+	//TODO: Simulated proxies do not have viewports so this will not be replicated yet
 	FVector2D ViewportSize;
 	if (GEngine && GEngine->GameViewport)
 	{
@@ -124,9 +125,11 @@ void UCombatComponent::TraceUnderCrosshairs(FHitResult& TraceHitResult)
 		{
 			// Just set the impact point to the end of the hit result if it hit nothing
 			TraceHitResult.ImpactPoint = End;
+			HitTarget = End;
 		}
 		else
 		{
+			HitTarget = TraceHitResult.ImpactPoint;
 			DrawDebugSphere(GetWorld(), TraceHitResult.ImpactPoint, 10.0f, 10, FColor::Red);
 		}
 	}
@@ -149,7 +152,7 @@ void UCombatComponent::MulticastFire_Implementation()
 	if (Character) // Not checking for bFireButtonPressed here as it's checked on client side and not replicated
 	{
 		Character->PlayFireMontage(bAiming);
-		EquippedWeapon->Fire();
+		EquippedWeapon->Fire(HitTarget);
 	}
 }
 

@@ -9,7 +9,7 @@
 class UBoxComponent;
 
 /**
- *  
+ *  Class to manage projectile interaction
  */
 UCLASS()
 class BLASTER_API AProjectile : public AActor

@@ -95,7 +95,10 @@ public:
 	/** Widget that is shown when overlapping with a character. */
 	void ShowPickupWidget(bool bShowWidget);
 
-	/** Fire the weapon. */
-	void Fire();
+	/** 
+	 *	Fire the Weapon a direction
+	 *	@param HitTarget direction of the target that we want the projectile to move to.
+	 */
+	virtual void Fire(const FVector& HitTarget);
 
 };
