@@ -7,6 +7,7 @@
 #include "Projectile.generated.h"
 
 class UBoxComponent;
+class UProjectileMovementComponent;
 
 /**
  *  Class to manage projectile interaction
@@ -30,6 +31,8 @@ private:
 	UPROPERTY(EditAnywhere)
 	UBoxComponent* CollisionBox;
 
-
+	UPROPERTY(EditAnywhere)
+	UProjectileMovementComponent* ProjectileMovementComponent;
+	
 	
 };
