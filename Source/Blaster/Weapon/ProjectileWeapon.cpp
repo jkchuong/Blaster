@@ -10,6 +10,12 @@ void AProjectileWeapon::Fire(const FVector& HitTarget)
 {
 	Super::Fire(HitTarget);
 
+	// Only want to spawn the projectile in server to prevent cheating from client side
+	if (!HasAuthority())
+	{
+		return;
+	}
+
 	// So we know who fired the weapon
 	APawn* InstigatorPawn = Cast<APawn>(GetOwner());
 
