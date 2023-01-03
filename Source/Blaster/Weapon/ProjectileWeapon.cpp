@@ -5,6 +5,8 @@
 
 #include "Engine/SkeletalMeshSocket.h"
 #include "Projectile.h"
+#include "Components/SkeletalMeshComponent.h"
+#include "Engine/World.h"
 
 void AProjectileWeapon::Fire(const FVector& HitTarget)
 {

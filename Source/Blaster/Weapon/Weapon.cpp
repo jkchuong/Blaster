@@ -8,13 +8,14 @@
 #include "Components/WidgetComponent.h"
 #include "Net/UnrealNetwork.h"
 #include "Animation/AnimationAsset.h"
+#include "Components/SkeletalMeshComponent.h"
 
 AWeapon::AWeapon()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
-	// To ensure the weapon can be replicated and have the authority role on server
+	// To ensure the weapon can be replicated and have the authority role on server (check on Blueprint too)
 	bReplicates = true;
 
 	WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponMesh"));

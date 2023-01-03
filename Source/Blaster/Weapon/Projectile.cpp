@@ -34,6 +34,7 @@ void AProjectile::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// Spawn tracer so player knows where the bullet is going
 	if (Tracer)
 	{
 		TracerComponent = UGameplayStatics::SpawnEmitterAttached(
