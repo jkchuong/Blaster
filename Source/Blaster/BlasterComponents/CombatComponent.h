@@ -50,13 +50,13 @@ protected:
 
 	bool bFireButtonPressed;
 
-	/** Server RPC for firing the weapon. */
+	/** Server RPC for firing the weapon at a Hit Target. */
 	UFUNCTION(Server, Reliable)
-	void ServerFire();
+	void ServerFire(const FVector_NetQuantize& TraceHitTarget);
 
 	/** Multicast RPC for showing weapon firing on clients from the server. Called by ServerFire. */
 	UFUNCTION(NetMulticast, Reliable)
-	void MulticastFire();
+	void MulticastFire(const FVector_NetQuantize& TraceHitTarget);
 
 	/** Create a line trace to show where a projectile will fire. */
 	void TraceUnderCrosshairs(FHitResult& TraceHitResult);
@@ -82,6 +82,4 @@ private:
 	UPROPERTY(EditAnywhere)
 	float AimWalkSpeed;
 
-	/** The target that the player is pointing towards. */
-	FVector HitTarget;
 };

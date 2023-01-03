@@ -25,9 +25,6 @@ void UCombatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	FHitResult HitResult;
-	TraceUnderCrosshairs(HitResult);
-
 }
 
 void UCombatComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -79,12 +76,15 @@ void UCombatComponent::OnRep_EquippedWeapon()
 }
 
 void UCombatComponent::FireButtonPressed(bool bPressed)
-{
+{	
 	bFireButtonPressed = bPressed;
 
 	if (bFireButtonPressed)
 	{
-		ServerFire();
+		FHitResult HitResult;
+		TraceUnderCrosshairs(HitResult);
+		
+		ServerFire(HitResult.ImpactPoint);
 	}
 }
 
@@ -120,29 +120,16 @@ void UCombatComponent::TraceUnderCrosshairs(FHitResult& TraceHitResult)
 			End,
 			ECC_Visibility
 		);
-
-		if (!TraceHitResult.bBlockingHit)
-		{
-			// Just set the impact point to the end of the hit result if it hit nothing
-			TraceHitResult.ImpactPoint = End;
-			HitTarget = End;
-		}
-		else
-		{
-			HitTarget = TraceHitResult.ImpactPoint;
-			DrawDebugSphere(GetWorld(), TraceHitResult.ImpactPoint, 10.0f, 10, FColor::Red);
-		}
 	}
-	
 }
 
-void UCombatComponent::ServerFire_Implementation()
+void UCombatComponent::ServerFire_Implementation(const FVector_NetQuantize& TraceHitTarget)
 {
-	// Using multicast so all clients and server will fire the weapon.
-	MulticastFire();
+	// Using multicast on the server so all clients and server will fire the weapon.
+	MulticastFire(TraceHitTarget);
 }
 
-void UCombatComponent::MulticastFire_Implementation()
+void UCombatComponent::MulticastFire_Implementation(const FVector_NetQuantize& TraceHitTarget)
 {
 	if (!EquippedWeapon)
 	{
@@ -152,7 +139,7 @@ void UCombatComponent::MulticastFire_Implementation()
 	if (Character) // Not checking for bFireButtonPressed here as it's checked on client side and not replicated
 	{
 		Character->PlayFireMontage(bAiming);
-		EquippedWeapon->Fire(HitTarget);
+		EquippedWeapon->Fire(TraceHitTarget);
 	}
 }
 
