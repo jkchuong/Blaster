@@ -9,6 +9,7 @@
 class USphereComponent;
 class UWidgetComponent;
 class UAnimationAsset;
+class ACasing;
 
 // Used for determining what we can do with the weapon in each state
 UENUM(BlueprintType)
@@ -86,6 +87,10 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Weapon Properties")
 	UAnimationAsset* FireAnimation;
 
+	/** The class of the ammo casing that will be ejected from the weapon when firing. */
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<ACasing> CasingClass;
+
 public:
 
 	void SetWeaponState(EWeaponState State);
@@ -96,7 +101,7 @@ public:
 	void ShowPickupWidget(bool bShowWidget);
 
 	/** 
-	 *	Fire the Weapon a direction
+	 *	Fire the Weapon a direction and play any animations or effects required when firing.
 	 *	@param HitTarget direction of the target that we want the projectile to move to.
 	 */
 	virtual void Fire(const FVector& HitTarget);
