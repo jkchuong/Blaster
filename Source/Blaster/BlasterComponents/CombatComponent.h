@@ -9,6 +9,8 @@
 #define TRACE_LENGTH 80000
 
 class AWeapon;
+class ABlasterPlayerController;
+class ABlasterHUD;
 
 /**
  *  Actor Component for handling all functionality related to combat.
@@ -60,11 +62,20 @@ protected:
 
 	/** Create a line trace to show where a projectile will fire. */
 	void TraceUnderCrosshairs(FHitResult& TraceHitResult);
+
+	/** Set the crosshairs shown on BlasterHUD when moving or switching weapons. */
+	void SetHUDCrosshairs(float DeltaTime);
 	
 private:
 
 	UPROPERTY()
 	ABlasterCharacter* Character;
+	
+	UPROPERTY()
+	ABlasterPlayerController* Controller;
+
+	UPROPERTY()
+	ABlasterHUD* HUD;
 
 	/** The weapon that the character has currently equipped. */
 	UPROPERTY(ReplicatedUsing = OnRep_EquippedWeapon)

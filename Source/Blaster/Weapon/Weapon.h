@@ -9,6 +9,7 @@
 class USphereComponent;
 class UWidgetComponent;
 class UAnimationAsset;
+class UTexture2D;
 class ACasing;
 
 // Used for determining what we can do with the weapon in each state
@@ -92,6 +93,24 @@ private:
 	TSubclassOf<ACasing> CasingClass;
 
 public:
+
+	/**
+	 * Textures for the weapon crosshairs. To be set in the HUD via combat component
+	*/
+	UPROPERTY(EditAnywhere, Category = "Crosshairs")
+	UTexture2D* CrosshairsCenter;
+	
+	UPROPERTY(EditAnywhere, Category = "Crosshairs")
+	UTexture2D* CrosshairsLeft;
+	
+	UPROPERTY(EditAnywhere, Category = "Crosshairs")
+	UTexture2D* CrosshairsRight;
+	
+	UPROPERTY(EditAnywhere, Category = "Crosshairs")
+	UTexture2D* CrosshairsTop;
+	
+	UPROPERTY(EditAnywhere, Category = "Crosshairs")
+	UTexture2D* CrosshairsBottom;
 
 	void SetWeaponState(EWeaponState State);
 	FORCEINLINE USphereComponent* GetAreaSphere() const { return AreaSphere; }
