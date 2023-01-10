@@ -132,14 +132,20 @@ void UCombatComponent::SetHUDCrosshairs(float DeltaTime)
 	{
 		return;
 	}
-
+	
 	// Cast to Controller if Controller is not already set
-	Controller = Controller ? Cast<ABlasterPlayerController>(Character->Controller) : Controller;
-
+	if (!Controller)
+	{
+		Controller = Cast<ABlasterPlayerController>(Character->Controller);
+	}
+	
 	if (Controller)
 	{
-		HUD = HUD ? Cast<ABlasterHUD>(Controller->GetHUD()) : HUD;
-
+		if (!HUD)
+		{
+			HUD = Cast<ABlasterHUD>(Controller->GetHUD());
+		}
+		
 		if (HUD)
 		{
 			FHUDPackage HUDPackage;
